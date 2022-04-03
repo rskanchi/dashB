@@ -1,0 +1,113 @@
+---
+title: "Flex Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: row 
+    vertical_layout: fill 
+    social: ["menu"]
+    source_code: embed
+    theme:
+      version: 4
+      bootswatch: lumen
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(palmerpenguins)
+library(plotly)
+library(DT)
+library(fontawesome)
+# checkout datatables.net to see all options for data\
+# htmlwidgets.org showcases several widgets 
+# fontawesome.com has thousands of icons to use in the dashboard
+# bootswatch.com/sketchy to look at the different themes
+
+data("penguins")
+
+```
+
+Plots {data-navmenu="Pages"}
+=======================================================================
+
+Sidebar {.sidebar}
+-----------------------------------------------------------------------
+
+<!--
+This is a comment
+-->
+
+### Brief
+
+Data from the R library palmerpenguins
+
+Number of penguins, n = `r nrow(penguins)`
+
+Variables = `r colnames(penguins)[3:6]`
+
+Row
+----------------------------------------------------------------------
+
+### Number of penguins
+
+```{r}
+valueBox(nrow(penguins), icon = "fa-linux")
+```
+
+### Average boby mass
+
+```{r}
+avgMass <- round(mean(penguins$body_mass_g, na.rm = TRUE), 1)
+gauge(avgMass, 
+      min = 0, max = max(penguins$body_mass_g, na.rm = TRUE),
+      gaugeSectors(success = c(4000, 6300),
+                   warning = c(2000, 3999),
+                   danger = c(0,1999))
+      
+      )
+```
+
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### Scatter plot of bill length and depth 
+
+```{r}
+
+plot_a <- penguins %>% ggplot(aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
+  geom_point()
+plotly::ggplotly(plot_a)
+
+```
+
+
+### Chart B
+
+```{r}
+
+penguins %>% ggplot(aes(x = body_mass_g, y = sex, fill = sex)) +
+  geom_boxplot()
+
+```
+
+### Chart C
+
+```{r}
+
+penguins %>% ggplot(aes(x = flipper_length_mm, fill = species)) +
+  geom_histogram() +
+  facet_wrap(~species)
+
+```
+
+Data {data-navmenu="Pages"}
+=======================================================================
+
+```{r}
+# checkout datatables.net to see all options for data
+penguins %>% datatable(extensions = "Buttons",
+                       options = list(dom = "Blfrtip",
+                                      buttons = c("copy", "csv", "excel", "pdf", "print")))
+```
+
