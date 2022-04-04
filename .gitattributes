@@ -1,0 +1,7 @@
+# Basic .gitattributes for a R repo.
+
+# Source files
+# ============
+*.R  	  text
+*.Rproj text
+*.[Rr]md   linguist-detectable
